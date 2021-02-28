@@ -38,4 +38,8 @@ public class Crime {
     public void setmSolved(Boolean mSolved) {
         this.mSolved = mSolved;
     }
+
+    public UUID getId() {
+        return this.mId;
+    }
 }
