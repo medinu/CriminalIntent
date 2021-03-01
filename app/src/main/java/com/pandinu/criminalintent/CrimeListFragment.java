@@ -6,7 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +21,6 @@ import java.util.List;
 public class CrimeListFragment extends Fragment {
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
-    private CrimeLab mCrimeLab;
 
 
     @Nullable
@@ -48,46 +49,79 @@ public class CrimeListFragment extends Fragment {
 
         public CrimeAdapter(List <Crime> crimes){
             mCrimes = crimes;
-            Log.i("Crime_Fragment", mCrimes.get(0).getmTitle());
         }
 
         @NonNull
         @Override
         public CrimeHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            return new CrimeHolder(layoutInflater, parent);
+
+//            if (viewType == 1){
+//                return new CrimeHolder(layoutInflater, parent, viewType);
+//            }
+            return new CrimeHolder(layoutInflater, parent, viewType);
         }
 
         @Override
         public void onBindViewHolder(@NonNull CrimeHolder holder, int position) {
             holder.bind(mCrimes.get(position));
-
-            //return 0;
         }
 
         @Override
         public int getItemCount() {
-            Log.i("Crime_Fragment", mCrimes.size() + "");
             return mCrimes.size();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if(mCrimes.get(position).getmRequiresPolice()){
+                return 1;
+            }
+            return 0;
         }
     }
 
-    private class CrimeHolder extends RecyclerView.ViewHolder{
+    private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView title, date;
         private Crime mCrime;
+        private Button mCallPolice;
 
-        public CrimeHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.list_item_crime, parent, false));
+//        public CrimeHolder(LayoutInflater inflater, ViewGroup parent) {
+//            super(inflater.inflate(R.layout.list_item_crime, parent, false));
+//            title = (TextView)itemView.findViewById(R.id.crime_title);
+//            date = (TextView)itemView.findViewById(R.id.crime_date);
+//            itemView.setOnClickListener(this);
+//        }
+
+        public CrimeHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+            super(inflater.inflate((viewType == 1)? R.layout.list_item_crime_police: R.layout.list_item_crime, parent, false));
             title = (TextView)itemView.findViewById(R.id.crime_title);
             date = (TextView)itemView.findViewById(R.id.crime_date);
+
+            if (viewType == 1){
+                mCallPolice = (Button)itemView.findViewById(R.id.btnCallPolice);
+
+                mCallPolice.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getContext(), "The police are on their way", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Crime crime){
             mCrime = crime;
-            Log.i("CrimeListFragment", crime.getmTitle());
+            //Log.i("CrimeListFragment", crime.getmTitle());
             this.title.setText(mCrime.getmTitle());
-            Log.i("CrimeListFragment", crime.getmDate().toString());
-            this.date.setText(mCrime.getmDate().toString());
+            //Log.i("CrimeListFragment", crime.getmDate().toString());
+            date.setText(mCrime.getmDate().toString());
+        }
+
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getActivity(), mCrime.getmTitle() + " clicked!", Toast.LENGTH_SHORT).show();
         }
     }
 
