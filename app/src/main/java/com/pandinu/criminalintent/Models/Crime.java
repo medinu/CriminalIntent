@@ -1,4 +1,4 @@
-package com.pandinu.criminalintent;
+package com.pandinu.criminalintent.Models;
 
 import java.util.Date;
 import java.util.UUID;
@@ -13,7 +13,7 @@ public class Crime {
     public Crime(){
         this.mId = UUID.randomUUID();
         this.mDate = new Date();
-        //this.mSolved = false;
+        this.mSolved = false;
     }
 
     public String getmTitle() {
@@ -32,7 +32,7 @@ public class Crime {
         this.mDate = mDate;
     }
 
-    public Boolean getmSolved() {
+    public Boolean isSolved() {
         return mSolved;
     }
 

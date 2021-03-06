@@ -2,6 +2,8 @@ package com.pandinu.criminalintent;
 
 import android.content.Context;
 
+import com.pandinu.criminalintent.Models.Crime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

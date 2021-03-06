@@ -1,8 +1,7 @@
-package com.pandinu.criminalintent;
+package com.pandinu.criminalintent.Fragments;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.pandinu.criminalintent.Activities.CrimeActivity;
+import com.pandinu.criminalintent.Activities.CrimePagerActivity;
+import com.pandinu.criminalintent.CrimeLab;
+import com.pandinu.criminalintent.Models.Crime;
+import com.pandinu.criminalintent.R;
 
 import java.util.List;
 
@@ -39,8 +44,14 @@ public class CrimeListFragment extends Fragment {
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getmCrimes();
-        mAdapter = new CrimeAdapter(crimes);
-        mCrimeRecyclerView.setAdapter(mAdapter);
+
+        if(mAdapter == null){
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        }
+        else{
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
 
@@ -104,7 +115,7 @@ public class CrimeListFragment extends Fragment {
                 mCallPolice.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getContext(), "The police are on their way", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "The police are on their way!", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -122,7 +133,14 @@ public class CrimeListFragment extends Fragment {
         @Override
         public void onClick(View v) {
             Toast.makeText(getActivity(), mCrime.getmTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+            Intent i = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
+            startActivity(i);
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
 }
