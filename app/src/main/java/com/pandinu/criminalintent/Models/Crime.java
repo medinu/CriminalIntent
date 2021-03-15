@@ -14,6 +14,7 @@ public class Crime {
         this.mId = UUID.randomUUID();
         this.mDate = new Date();
         this.mSolved = false;
+        this.mRequiresPolice = false;
     }
 
     public String getmTitle() {
