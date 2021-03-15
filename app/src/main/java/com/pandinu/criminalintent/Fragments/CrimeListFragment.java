@@ -80,7 +80,6 @@ public class CrimeListFragment extends Fragment {
             case R.id.crime_add:
                 Crime crime = new Crime();
                 CrimeLab.get(getActivity()).addCrime(crime);
-                //Toast.makeText(getActivity(), "add crime is clicked", Toast.LENGTH_SHORT).show();
                 Intent i = CrimePagerActivity.newIntent(getActivity(), crime.getId());
                 startActivity(i);
                 return true;
@@ -188,7 +187,6 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            //Toast.makeText(getActivity(), mCrime.getmTitle() + " clicked!", Toast.LENGTH_SHORT).show();
             Intent i = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
             startActivity(i);
         }

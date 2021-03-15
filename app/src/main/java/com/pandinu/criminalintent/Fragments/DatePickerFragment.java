@@ -48,7 +48,6 @@ public class DatePickerFragment extends DialogFragment {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //Toast.makeText(getActivity(), year + "/" + month + "/" + day + ".", Toast.LENGTH_LONG).show();
 
                         Date date = new GregorianCalendar(mDatePicker.getYear(), mDatePicker.getMonth(), mDatePicker.getDayOfMonth()).getTime();
                         sendResult(Activity.RESULT_OK, date);

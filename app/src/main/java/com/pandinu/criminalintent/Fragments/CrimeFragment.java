@@ -112,7 +112,6 @@ public class   CrimeFragment extends Fragment {
         mTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(getActivity(), "Get Date", Toast.LENGTH_SHORT).show();
                 FragmentManager fm = getFragmentManager();
 
                 TimePickerFragment dialog = TimePickerFragment.newInstance(mCrime.getmDate());
@@ -161,16 +160,12 @@ public class   CrimeFragment extends Fragment {
         if(requestCode == REQUEST_DATE){
             Date date = (Date)data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setmDate(date);
-            //mDateButton.setText(date.toString());
             mDateButton.setText("Set Date: " + onlyDate.format(mCrime.getmDate()).toString());
-            //Toast.makeText(getActivity(),  "Date set: " +date.toString(), Toast.LENGTH_SHORT ).show();
         }
         if(requestCode == REQUEST_TIME){
             Date date = (Date)data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
             mCrime.setmDate(date);
-            //mTimeButton.setText(date.toString());
             mTimeButton.setText("Set Time: " + onlyTime.format(mCrime.getmDate()).toString());
-            //Toast.makeText(getActivity(),  "Time set: " + date.toString(), Toast.LENGTH_SHORT ).show();
         }
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -186,7 +181,6 @@ public class   CrimeFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.miDelete:
-                //Toast.makeText(getActivity(), mCrime.getmTitle() + " has been removed", Toast.LENGTH_SHORT).show();
                 CrimeLab.get(getActivity()).removeCrime(mCrime);
                 getActivity().finish();
                 return true;

@@ -56,7 +56,6 @@ public class TimePickerFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Date date = new GregorianCalendar(year, month, day, mTimePicker.getCurrentHour(), mTimePicker.getCurrentMinute()).getTime();
-                        Toast.makeText(getActivity(), "Inside dialog " + date.toString(), Toast.LENGTH_SHORT).show();
                         sendResult(Activity.RESULT_OK, date);
                     }
                 })
