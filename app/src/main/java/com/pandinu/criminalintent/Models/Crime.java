@@ -11,8 +11,12 @@ public class Crime {
     private Boolean mRequiresPolice;
 
     public Crime(){
-        this.mId = UUID.randomUUID();
-        this.mDate = new Date();
+        this(UUID.randomUUID());
+    }
+
+    public Crime(UUID uuid){
+        mId = uuid;
+        mDate = new Date();
         this.mSolved = false;
         this.mRequiresPolice = false;
     }
