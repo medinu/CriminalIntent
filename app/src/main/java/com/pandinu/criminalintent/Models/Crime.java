@@ -4,11 +4,13 @@ import java.util.Date;
 import java.util.UUID;
 
 public class Crime {
-    private String mTitle;
     private UUID mId;
+    private String mTitle;
     private Date mDate;
     private  Boolean mSolved;
     private Boolean mRequiresPolice;
+
+    private String mSuspect;
 
     public Crime(){
         this(UUID.randomUUID());
@@ -56,4 +58,14 @@ public class Crime {
     public Boolean getmRequiresPolice(){
         return this.mRequiresPolice;
     }
+
+    public String getmSuspect() {
+        return mSuspect;
+    }
+
+    public void setmSuspect(String mSuspect) {
+        this.mSuspect = mSuspect;
+    }
+
+
 }
