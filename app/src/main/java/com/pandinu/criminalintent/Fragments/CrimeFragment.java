@@ -2,10 +2,14 @@ package com.pandinu.criminalintent.Fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -20,20 +24,26 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ShareCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.pandinu.criminalintent.CrimeLab;
 import com.pandinu.criminalintent.Models.Crime;
+import com.pandinu.criminalintent.PictureUtils;
 import com.pandinu.criminalintent.R;
 
-import java.text.SimpleDateFormat;
+import java.io.File;
+import java.net.URI;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class   CrimeFragment extends Fragment {
@@ -42,11 +52,16 @@ public class   CrimeFragment extends Fragment {
     private static final String DIALOG_TIME = "DialogTime";
     private static final int REQUEST_TIME = 1;
     public static final int REQUEST_CONTACT = 2;
+    public static final int REQUEST_PHOTO = 1995;
 
     private Crime mCrime;
     private EditText mTitleField;
     private Button mDateButton, mTimeButton, mReportButton, mSuspectButton;
     private CheckBox mSolvedcheckbox, mRequirePolice;
+    private ImageButton mPhotoButton;
+    private ImageView mPhotoView;
+
+    private File mPhotoFile;
 
     private String onlyDate = "MM-dd-yyyy";
     private String onlyTime = "hh:mm:ss aaa";
@@ -59,6 +74,7 @@ public class   CrimeFragment extends Fragment {
 
         UUID crimeId = (UUID)getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
+        mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
     }
 
     @Nullable
@@ -95,7 +111,6 @@ public class   CrimeFragment extends Fragment {
 
         mDateButton = (Button)v.findViewById(R.id.crime_date);
         mDateButton.setText("Set Date: " + DateFormat.format(onlyDate, mCrime.getmDate()).toString());
-        //mDateButton.setEnabled(false);
 
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,6 +192,37 @@ public class   CrimeFragment extends Fragment {
             mSuspectButton.setText(mCrime.getmSuspect());
         }
 
+        PackageManager pm = getActivity().getPackageManager();
+
+        mPhotoView = (ImageView)v.findViewById(R.id.crime_photo);
+        mPhotoButton = (ImageButton)v.findViewById(R.id.crime_camera);
+
+        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE  );
+        Boolean canTakePhoto = mPhotoFile != null && captureImage.resolveActivity(pm) != null;
+        mPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = FileProvider.getUriForFile(
+                        getActivity(),
+                        "com.pandinu.criminalintent.fileprovider",
+                        mPhotoFile);
+
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+
+                List<ResolveInfo> cameraActivities =
+                        getActivity().getPackageManager().queryIntentActivities(
+                                captureImage, PackageManager.MATCH_DEFAULT_ONLY
+                        );
+
+                for(ResolveInfo activity: cameraActivities){
+                    getActivity().grantUriPermission(activity.activityInfo.packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                }
+
+                startActivityForResult(captureImage, REQUEST_PHOTO);
+            }
+        });
+
+        updatePhotoView();
         return v;
     }
 
@@ -231,6 +277,14 @@ public class   CrimeFragment extends Fragment {
 
         }
 
+        if(requestCode == REQUEST_PHOTO){
+            Toast.makeText(getActivity(), "Inside onActivityResult", Toast.LENGTH_SHORT).show();
+            updatePhotoView();
+
+            Uri uri = FileProvider.getUriForFile(getActivity(), "com.pandinu.criminalintent.fileprovider", mPhotoFile);
+            getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        }
+
 
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -280,5 +334,14 @@ public class   CrimeFragment extends Fragment {
         String report = getString(R.string.crime_report, mCrime.getmTitle(), dateString, solvedString, suspect);
 
         return report;
+    }
+
+    public void updatePhotoView(){
+        if(mPhotoFile == null || !mPhotoFile.exists()){
+            mPhotoView.setImageDrawable(null);
+        }else{
+            Bitmap bm = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+            mPhotoView.setImageBitmap(bm);
+        }
     }
 }

@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pandinu.criminalintent">
 
+    <uses-feature android:name="android.hardware.camera2" android:required="false"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,6 +20,17 @@
         <activity android:name=".Activities.CrimeActivity"/>
         <activity android:name=".Activities.CrimePagerActivity"
             android:parentActivityName=".Activities.CrimeListActivity"/>
-    </application>
 
+
+        <!--        might cause an error                            -->
+        <provider android:name="androidx.core.content.FileProvider"
+            android:authorities="com.pandinu.criminalintent.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/files"/>
+        </provider>
+    </application>
 </manifest>
