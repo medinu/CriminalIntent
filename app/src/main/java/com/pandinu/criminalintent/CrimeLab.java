@@ -153,5 +153,10 @@ public class CrimeLab {
         return new File(filesDir, crime.getPhotoFileName());
     }
 
+    public File getReporterPhotoFile(Crime crime){
+        File filesDir = mContext.getFilesDir();
+        return new File(filesDir, crime.getPhotoFileName()+"_Reporter");
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package com.pandinu.criminalintent.Fragments;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,8 +25,10 @@ import com.pandinu.criminalintent.Activities.CrimeActivity;
 import com.pandinu.criminalintent.Activities.CrimePagerActivity;
 import com.pandinu.criminalintent.CrimeLab;
 import com.pandinu.criminalintent.Models.Crime;
+import com.pandinu.criminalintent.PictureUtils;
 import com.pandinu.criminalintent.R;
 
+import java.io.File;
 import java.util.List;
 
 public class CrimeListFragment extends Fragment {
@@ -154,8 +158,11 @@ public class CrimeListFragment extends Fragment {
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView title, date;
+        private ImageView mCrimePhoto;
         private Crime mCrime;
         private Button mCallPolice;
+
+        private File mCrimePhotoFile;
 
 //        public CrimeHolder(LayoutInflater inflater, ViewGroup parent) {
 //            super(inflater.inflate(R.layout.list_item_crime, parent, false));
@@ -168,6 +175,7 @@ public class CrimeListFragment extends Fragment {
             super(inflater.inflate((viewType == 1)? R.layout.list_item_crime_police: R.layout.list_item_crime, parent, false));
             title = (TextView)itemView.findViewById(R.id.crime_title);
             date = (TextView)itemView.findViewById(R.id.crime_date);
+            mCrimePhoto = (ImageView)itemView.findViewById(R.id.iv_crime_image);
 
             if (viewType == 1){
                 mCallPolice = (Button)itemView.findViewById(R.id.btnCallPolice);
@@ -183,11 +191,22 @@ public class CrimeListFragment extends Fragment {
         }
 
         public void bind(Crime crime){
+            mCrimePhotoFile = CrimeLab.get(getActivity()).getPhotoFile(crime);
+
             mCrime = crime;
             //Log.i("CrimeListFragment", crime.getmTitle());
             this.title.setText(mCrime.getmTitle());
             //Log.i("CrimeListFragment", crime.getmDate().toString());
             date.setText(mCrime.getmDate().toString());
+
+            if(mCrimePhotoFile == null || !mCrimePhotoFile.exists()){
+                mCrimePhoto.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_add_a_photo_24));
+            }else{
+                Bitmap bm = PictureUtils.getScaledBitmap(mCrimePhotoFile.getPath(), getActivity());
+                mCrimePhoto.setImageBitmap(bm);
+            }
+
+            //mCrimePhoto
         }
 
         @Override
